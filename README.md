@@ -36,12 +36,9 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
-## Screenshots
-
-(Add screenshots here)
 
 ## Author
 
-Your Name
+Bashir Ahmad
 BS Artificial Intelligence
 IQRA University Islamabad
