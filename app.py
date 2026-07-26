@@ -4,16 +4,17 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout
 from PIL import Image
 import os
+import base64
+import gdown
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 st.set_page_config(
     page_title="NeuroScan AI | Brain Tumor Detection",
-    page_icon="",
+    page_icon="🧠",
     layout="wide",
     initial_sidebar_state="expanded"
 )
-import base64
 
 def get_base64_image(image_path):
     with open(image_path, "rb") as f:
@@ -218,9 +219,16 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# ---------------- MODEL LOADING ----------------
+# ---------------- MODEL LOADING (Google Drive auto-download) ----------------
+WEIGHTS_PATH = os.path.join(BASE_DIR, "brain_tumor_weights.weights.h5")
+WEIGHTS_FILE_ID = "1cikmuIAFfSAYJvGb97gYdzGc85K95HK6"
+
 @st.cache_resource
 def load_trained_model():
+    if not os.path.exists(WEIGHTS_PATH):
+        url = f"https://drive.google.com/uc?id={WEIGHTS_FILE_ID}"
+        gdown.download(url, WEIGHTS_PATH, quiet=False)
+
     model = Sequential([
         Conv2D(32, (3,3), activation='relu', input_shape=(128,128,3)),
         MaxPooling2D(2,2),
@@ -233,7 +241,7 @@ def load_trained_model():
         Dropout(0.5),
         Dense(1, activation='sigmoid')
     ])
-    model.load_weights(os.path.join(BASE_DIR, "brain_tumor_weights.weights.h5"))
+    model.load_weights(WEIGHTS_PATH)
     return model
 
 model = load_trained_model()
